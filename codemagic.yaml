@@ -1,0 +1,32 @@
+workflows:
+  android-debug:
+    name: Wisdom AI Studio Android
+    max_build_duration: 60
+
+    environment:
+      flutter: stable
+
+    scripts:
+      - name: Extract project
+        script: |
+          rm -rf "$CM_BUILD_DIR/wisdom_build"
+          mkdir -p "$CM_BUILD_DIR/wisdom_build"
+          unzip -q "$CM_BUILD_DIR/Wisdom_AI_Studio_v0.4_COMPLETE.zip" -d "$CM_BUILD_DIR/wisdom_build"
+
+      - name: Create Android project
+        working_directory: wisdom_build/wisdom_ai_studio/mobile
+        script: |
+          flutter create --platforms=android .
+
+      - name: Get Flutter packages
+        working_directory: wisdom_build/wisdom_ai_studio/mobile
+        script: |
+          flutter pub get
+
+      - name: Build Android APK
+        working_directory: wisdom_build/wisdom_ai_studio/mobile
+        script: |
+          flutter build apk --debug
+
+    artifacts:
+      - wisdom_build/wisdom_ai_studio/mobile/build/app/outputs/flutter-apk/*.apk
